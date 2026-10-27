@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>黑貓翻翻樂｜世界黑貓日</title>
+<meta name="description" content="10.27 世界黑貓日，拼圖喵邀你玩黑貓翻翻樂：翻開牌卡，找出六隻黑貓的配對，看看你花多少時間破關。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="黑貓翻翻樂｜世界黑貓日">
+<meta property="og:description" content="翻開牌卡，找出六隻黑貓的配對，看看你花多少時間破關。">
+<meta name="theme-color" content="#0d0907">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%23ff7a1a'%3E%3Cellipse cx='32' cy='42' rx='13' ry='11'/%3E%3Cellipse cx='15' cy='27' rx='6' ry='7.5'/%3E%3Cellipse cx='49' cy='27' rx='6' ry='7.5'/%3E%3Cellipse cx='24' cy='14' rx='5.5' ry='7'/%3E%3Cellipse cx='40' cy='14' rx='5.5' ry='7'/%3E%3C/g%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0907;--bg2:#1c130e;--card:#24170f;--amber:#ff7a1a;--cream:#f8ecdc;--muted:#c2ab98;--good:#ffd23f}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#3d1d0a 0%,var(--bg) 60%);color:var(--cream);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;flex-direction:column;align-items:center;padding:24px 16px 32px}
+header{text-align:center;max-width:640px}
+.date{color:var(--amber);letter-spacing:.2em;font-size:.85rem;margin:0}
+h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;margin:.3em 0 .2em}
+h1 span{color:var(--amber)}
+.intro{color:var(--muted);line-height:1.7;margin:0 0 18px;font-size:.98rem}
+.bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.stat{background:var(--bg2);border:1px solid #4a2c1a;border-radius:12px;padding:8px 16px;min-width:96px;text-align:center}
+.stat b{display:block;font-size:1.4rem;font-variant-numeric:tabular-nums;color:var(--cream)}
+.stat small{color:var(--muted);font-size:.78rem;letter-spacing:.1em}
+button.reset{background:transparent;color:var(--amber);border:1px solid var(--amber);border-radius:12px;padding:0 16px;font:inherit;cursor:pointer}
+button.reset:hover{background:var(--amber);color:var(--bg)}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:min(640px,100%)}
+@media (max-width:520px){.board{grid-template-columns:repeat(3,1fr);gap:8px}.intro br{display:none}button.reset{padding:8px 18px}}
+.card{aspect-ratio:1;perspective:900px;border:0;padding:0;background:none;cursor:pointer}
+.inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
+.card.open .inner,.card.done .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.back{background:linear-gradient(145deg,#2a1a10,#120c09);border:2px solid #4a2c1a;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.back svg{width:48%;height:auto}
+.card:hover .back{border-color:var(--amber)}
+.front{transform:rotateY(180deg);border:2px solid var(--amber);background:#000}
+.front img{width:100%;height:100%;object-fit:cover;display:block}
+.card.done .front{border-color:var(--good);box-shadow:0 0 0 3px rgba(255,210,63,.3)}
+.card:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:14px}
+.overlay{position:fixed;inset:0;background:rgba(10,8,14,.78);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--amber);border-radius:20px;padding:28px 24px;max-width:420px;width:100%;text-align:center}
+.modal h2{margin:.2em 0;font-size:1.6rem}
+.modal .big{font-size:2.6rem;font-weight:900;color:var(--amber);font-variant-numeric:tabular-nums;margin:.2em 0}
+.modal p{color:var(--muted);line-height:1.7;margin:.4em 0}
+.thumbs{display:flex;justify-content:center;gap:6px;margin:14px 0;flex-wrap:wrap}
+.thumbs img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--amber)}
+.modal button{margin-top:10px;background:var(--amber);color:var(--bg);border:0;border-radius:12px;padding:10px 26px;font:inherit;font-weight:700;cursor:pointer}
+
+.toast{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.9);background:var(--amber);color:var(--bg);font-weight:900;font-size:clamp(1.1rem,4vw,1.5rem);padding:12px 26px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:5;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.hero{display:flex;align-items:center;justify-content:center;gap:clamp(8px,3vw,28px);margin-bottom:6px}
+.hero svg{width:clamp(130px,30vw,200px);height:auto;flex-shrink:0}
+.hero .title{text-align:left}
+.hero h1{margin:.1em 0 0;font-size:clamp(2.2rem,8vw,3.6rem);line-height:1.1}
+@media (max-width:520px){.hero{flex-direction:column}.hero .title{text-align:center}}
+footer{margin-top:24px;display:flex;justify-content:center}
+.logo-link{display:block;background:#fff;border-radius:10px;padding:6px 10px;opacity:.9;transition:transform .2s,box-shadow .2s}
+.logo-link:hover{opacity:1;box-shadow:0 0 0 2px var(--amber)}
+.logo-link:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.logo-link img{display:block;width:clamp(100px,24vw,130px);height:auto}
+
+</style>
+</head>
+<body>
+<header>
+<div class="hero"><svg viewBox="0 0 260 230" role="img" aria-label="橘色滿月下的黑貓與南瓜燈插畫">
+<circle cx="150" cy="100" r="90" fill="#ff7a1a"/>
+<g fill="#f2680c"><circle cx="112" cy="58" r="10"/><circle cx="196" cy="70" r="7"/><circle cx="200" cy="138" r="12"/><circle cx="104" cy="140" r="6"/></g>
+<g fill="#0a0706"><path transform="translate(30 40) scale(1.1)" d="M0 0 Q6 -7 12 -2 Q14 -7 16 -4 Q18 -7 20 -2 Q26 -7 32 0 Q26 -1 22 5 Q18 1 16 6 Q14 1 10 5 Q6 -1 0 0Z"/><path transform="translate(76 18) scale(.75)" d="M0 0 Q6 -7 12 -2 Q14 -7 16 -4 Q18 -7 20 -2 Q26 -7 32 0 Q26 -1 22 5 Q18 1 16 6 Q14 1 10 5 Q6 -1 0 0Z"/><path transform="translate(206 22) scale(.9)" d="M0 0 Q6 -7 12 -2 Q14 -7 16 -4 Q18 -7 20 -2 Q26 -7 32 0 Q26 -1 22 5 Q18 1 16 6 Q14 1 10 5 Q6 -1 0 0Z"/></g>
+<g fill="#0a0706" transform="translate(38 4)">
+<path d="M150 196 C 205 200, 214 160, 190 140 C 182 133, 172 138, 178 146 C 192 162, 182 182, 146 182 Z"/>
+<path d="M84 112 C 66 140, 60 176, 66 198 L 160 198 C 166 176, 158 140, 140 112 Z"/>
+<path d="M76 70 L 74 26 L 104 50 Z M 148 70 L 150 26 L 120 50 Z" stroke-linejoin="round"/>
+<ellipse cx="112" cy="80" rx="42" ry="36"/>
+<ellipse cx="96" cy="198" rx="13" ry="6"/><ellipse cx="128" cy="198" rx="13" ry="6"/>
+</g>
+<g transform="translate(38 4)">
+<path d="M80 58 L79 36 L96 50 Z M144 58 L145 36 L128 50 Z" fill="#3a1d0c"/>
+<ellipse cx="96" cy="78" rx="10" ry="11" fill="#ffd23f"/><ellipse cx="128" cy="78" rx="10" ry="11" fill="#ffd23f"/>
+<ellipse cx="96" cy="78" rx="2.6" ry="9" fill="#0a0706"/><ellipse cx="128" cy="78" rx="2.6" ry="9" fill="#0a0706"/>
+<circle cx="99" cy="74" r="2" fill="#fff"/><circle cx="131" cy="74" r="2" fill="#fff"/>
+<g stroke="#6b4a36" stroke-width="1.4" stroke-linecap="round"><path d="M88 96 L60 92"/><path d="M88 100 L62 104"/><path d="M136 96 L164 92"/><path d="M136 100 L162 104"/></g>
+</g>
+<path d="M0 212 Q130 198 260 212 L260 230 L0 230Z" fill="#0a0706"/>
+<g transform="translate(54 196)">
+<path d="M-2 -24 Q0 -34 8 -36" stroke="#4a5a1e" stroke-width="5" fill="none" stroke-linecap="round"/>
+<ellipse cx="-14" cy="0" rx="18" ry="22" fill="#e8650d"/><ellipse cx="14" cy="0" rx="18" ry="22" fill="#e8650d"/>
+<ellipse cx="0" cy="0" rx="18" ry="24" fill="#ff8c1a"/>
+<g fill="#ffd23f"><path d="M-17 -8 L-9 -8 L-13 -15 Z"/><path d="M9 -8 L17 -8 L13 -15 Z"/><path d="M-18 4 L-12 10 L-6 5 L0 11 L6 5 L12 10 L18 4 L14 13 L-14 13 Z"/></g>
+</g>
+</svg><div class="title"><p class="date">10.27　世界黑貓日</p><h1>黑貓<span>翻翻樂</span></h1></div></div>
+<p class="intro">六隻黑貓躲在牌底下。每次翻開兩張，記住牠們的位置，<br>把同一隻貓的兩張牌配成一對，看看你花多少時間找齊六隻！</p>
+</header>
+<div class="bar">
+<div class="stat"><b id="time">00:00</b><small>計時</small></div>
+<div class="stat"><b id="moves">0</b><small>翻牌次數</small></div>
+<div class="stat"><b id="pairs">0 / 6</b><small>已配對</small></div>
+<button class="reset" id="reset">重新洗牌</button>
+</div>
+<main class="board" id="board" aria-label="翻牌遊戲"></main>
+<div class="overlay" id="overlay">
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+<h2 id="winTitle">六隻黑貓都找到了！</h2>
+<div class="big" id="finalTime">00:00</div>
+<p id="finalMoves"></p>
+<div class="thumbs" id="thumbs"></div>
+<p>謝謝你，記住了每一隻黑貓的位置。</p>
+<button id="again">再玩一次</button>
+</div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<footer><a class="logo-link" href="https://portaly.cc/pintumeow" target="_blank" rel="noopener" aria-label="前往拼圖喵的連結集合"><img src="images/logo.png" alt="社團法人拼圖喵生命平權推廣協會"></a></footer>
+<script>
+const CATS=[{"name": "嘿美", "src": "images/cats/heimei.jpg"}, {"name": "巧虎", "src": "images/cats/qiaohu.jpg"}, {"name": "沒牙", "src": "images/cats/meiya.jpg"}, {"name": "米漿", "src": "images/cats/mijiang.jpg"}, {"name": "阿布", "src": "images/cats/abu.jpg"}, {"name": "黑來", "src": "images/cats/heilai.jpg"}];
+CATS.forEach(c=>{const i=new Image();i.src=c.src});
+const PAW='<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#ff7a1a"><ellipse cx="32" cy="42" rx="13" ry="11"/><ellipse cx="15" cy="27" rx="6" ry="7.5"/><ellipse cx="49" cy="27" rx="6" ry="7.5"/><ellipse cx="24" cy="14" rx="5.5" ry="7"/><ellipse cx="40" cy="14" rx="5.5" ry="7"/></g></svg>';
+const board=document.getElementById('board'),timeEl=document.getElementById('time'),movesEl=document.getElementById('moves'),pairsEl=document.getElementById('pairs'),overlay=document.getElementById('overlay');
+const toast=document.getElementById('toast');let toastT=null;
+function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('show'),1100)}
+let first=null,lock=false,moves=0,pairs=0,start=0,timer=null,elapsed=0;
+function fmt(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function tick(){elapsed=performance.now()-start;timeEl.textContent=fmt(elapsed)}
+function build(){
+  clearInterval(timer);timer=null;first=null;lock=false;moves=0;pairs=0;elapsed=0;
+  timeEl.textContent='00:00';movesEl.textContent='0';pairsEl.textContent='0 / 6';overlay.classList.remove('show');toast.classList.remove('show');
+  board.innerHTML='';
+  const deck=shuffle(CATS.flatMap((c,i)=>[i,i]));
+  deck.forEach((id,pos)=>{
+    const b=document.createElement('button');b.className='card';b.dataset.id=id;b.setAttribute('aria-label','第'+(pos+1)+'張牌，蓋著');
+    b.innerHTML='<div class="inner"><div class="face back">'+PAW+'</div><div class="face front"><img alt="'+CATS[id].name+'" src="'+CATS[id].src+'"></div></div>';
+    b.addEventListener('click',()=>flip(b,pos));board.appendChild(b);
+  });
+}
+function flip(card,pos){
+  if(lock||card===first||card.classList.contains('done')||card.classList.contains('open'))return;
+  if(!timer){start=performance.now();timer=setInterval(tick,250)}
+  card.classList.add('open');card.setAttribute('aria-label','第'+(pos+1)+'張牌，'+CATS[card.dataset.id].name);
+  if(!first){first=card;return}
+  moves++;movesEl.textContent=moves;
+  const second=card;
+  if(first.dataset.id===second.dataset.id){
+    [first,second].forEach(c=>{c.classList.remove('open');c.classList.add('done')});
+    showToast('真棒！你找到'+CATS[second.dataset.id].name+'了！');first=null;pairs++;pairsEl.textContent=pairs+' / 6';
+    if(pairs===6)win();
+  }else{
+    lock=true;const a=first;first=null;
+    setTimeout(()=>{[a,second].forEach(c=>{c.classList.remove('open');c.setAttribute('aria-label','蓋著的牌')});lock=false},900);
+  }
+}
+function win(){
+  clearInterval(timer);tick();
+  document.getElementById('finalTime').textContent=fmt(elapsed);
+  document.getElementById('finalMoves').textContent='一共翻了 '+moves+' 次';
+  document.getElementById('thumbs').innerHTML=CATS.map(c=>'<img alt="'+c.name+'" title="'+c.name+'" src="'+c.src+'">').join('');
+  setTimeout(()=>{toast.classList.remove('show');overlay.classList.add('show')},1200);
+}
+document.getElementById('reset').onclick=build;document.getElementById('again').onclick=build;
+build();
+</script>
+</body>
+</html>
