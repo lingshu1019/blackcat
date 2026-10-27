@@ -45,6 +45,10 @@ button.reset:hover{background:var(--amber);color:var(--bg)}
 .modal h2{margin:.2em 0;font-size:1.6rem}
 .modal .big{font-size:2.6rem;font-weight:900;color:var(--amber);font-variant-numeric:tabular-nums;margin:.2em 0}
 .modal p{color:var(--muted);line-height:1.7;margin:.4em 0}
+.closing{color:var(--cream)!important}
+.modal-logo{display:block;width:max-content;margin:12px auto 4px;background:#fff;border-radius:10px;padding:6px 10px;transition:box-shadow .2s}
+.modal-logo:hover{box-shadow:0 0 0 2px var(--amber)}
+.modal-logo img{display:block;width:150px;height:auto}
 .thumbs{display:flex;justify-content:center;gap:6px;margin:14px 0;flex-wrap:wrap}
 .thumbs img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--amber)}
 .modal button{margin-top:10px;background:var(--amber);color:var(--bg);border:0;border-radius:12px;padding:10px 26px;font:inherit;font-weight:700;cursor:pointer}
@@ -92,7 +96,7 @@ footer{margin-top:24px;display:flex;justify-content:center}
 <g fill="#ffd23f"><path d="M-17 -8 L-9 -8 L-13 -15 Z"/><path d="M9 -8 L17 -8 L13 -15 Z"/><path d="M-18 4 L-12 10 L-6 5 L0 11 L6 5 L12 10 L18 4 L14 13 L-14 13 Z"/></g>
 </g>
 </svg><div class="title"><p class="date">10.27　世界黑貓日</p><h1>黑貓<span>翻翻樂</span></h1></div></div>
-<p class="intro">六隻黑貓躲在牌底下。每次翻開兩張，記住牠們的位置，<br>把同一隻貓的兩張牌配成一對，看看你花多少時間找齊六隻！</p>
+<p class="intro">六隻黑貓躲在牌底下。每次翻開兩張，記住他們的位置，<br>把同一隻貓的兩張牌配成一對，看看你花多少時間找齊六隻！</p>
 </header>
 <div class="bar">
 <div class="stat"><b id="time">00:00</b><small>計時</small></div>
@@ -107,7 +111,8 @@ footer{margin-top:24px;display:flex;justify-content:center}
 <div class="big" id="finalTime">00:00</div>
 <p id="finalMoves"></p>
 <div class="thumbs" id="thumbs"></div>
-<p>謝謝你，記住了每一隻黑貓的位置。</p>
+<p class="closing">每隻黑貓都有點像又有點不一樣，恭喜你認出他們啦！<br>點下方 LOGO 認識更多等家中的孩子吧！</p>
+<a class="modal-logo" href="https://portaly.cc/pintumeow" target="_blank" rel="noopener" aria-label="前往拼圖喵的連結集合"><img src="images/logo.png" alt="社團法人拼圖喵生命平權推廣協會"></a>
 <button id="again">再玩一次</button>
 </div>
 </div>
